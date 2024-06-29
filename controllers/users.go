@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Duvewo/banquend/handler"
@@ -25,7 +26,6 @@ func (c UsersController) Create(ctx echo.Context) error {
 	user := models.UserModel{}
 	if err := c.Router.Binder.Bind(&user, ctx); err != nil {
 		c.Logger.Errorf("controllers/users: to bind %w", err)
-
 		return err
 
 	}
@@ -34,6 +34,8 @@ func (c UsersController) Create(ctx echo.Context) error {
 
 	// user.Validate()
 
-	// err := c.Users.Create(user)
+	if err := c.Users.Create(context.Background(), user); err != nil {
+		return ctx.JSON(http.StatusBadGateway, echo.Map{"ok": false})
+	}
 	return ctx.JSON(http.StatusCreated, echo.Map{"ok": true})
 }
