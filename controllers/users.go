@@ -1,18 +1,39 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/Duvewo/banquend/handler"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/Duvewo/banquend/models"
+	"github.com/labstack/echo/v4"
 )
 
 type UsersController struct {
-	*pgxpool.Pool
 	handler.Handler
-	Path string
 }
 
-func (c UsersController) REGISTER(h handler.Handler) {
-	c.Router.Group(c.Path)
-	c.Router.GET("/:query", nil)
-	c.Router.POST("/create", nil)
+func (c UsersController) REGISTER(group *echo.Group) {
+	group.GET("/:query", c.ByQuery)
+	group.POST("/create", c.Create)
+}
+
+func (c UsersController) ByQuery(ctx echo.Context) error {
+	return nil
+}
+
+func (c UsersController) Create(ctx echo.Context) error {
+	user := models.UserModel{}
+	if err := c.Router.Binder.Bind(&user, ctx); err != nil {
+		c.Logger.Errorf("controllers/users: to bind %w", err)
+
+		return err
+
+	}
+
+	c.Logger.Infoln(user)
+
+	// user.Validate()
+
+	// err := c.Users.Create(user)
+	return ctx.JSON(http.StatusCreated, echo.Map{"ok": true})
 }

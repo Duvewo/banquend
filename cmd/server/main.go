@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Duvewo/banquend/controllers"
 	"github.com/Duvewo/banquend/handler"
-	"github.com/Duvewo/banquend/service"
 	"github.com/Duvewo/banquend/storage"
 	"github.com/Duvewo/banquend/storage/postgres"
 	"github.com/labstack/echo/v4"
@@ -16,10 +16,12 @@ import (
 )
 
 var (
-	FLAG_SRV_ADDR = flag.String("srv-addr", os.Getenv("SRV_ADDR"), "Server address to listen")
+	FLAG_SRV_ADDR  = flag.String("srv-addr", os.Getenv("SRV_ADDR"), "Server address to listen")
+	FLAG_IS_SECURE = flag.Bool("secure", true, "Run server in secure mode")
 )
 
 func main() {
+	flag.Parse()
 	e := echo.New()
 	log, err := zap.NewProduction()
 
@@ -31,16 +33,26 @@ func main() {
 	sugar := log.Sugar()
 	sugar.Debugln("logging is ready")
 
+	e.Debug = !*FLAG_IS_SECURE
+
 	pg, err := postgres.Open(context.Background(), "")
 
 	if err != nil {
 		os.Exit(1)
 	}
 
+	//TODO: handle this
+	if err := pg.Ping(context.Background()); err != nil {
+		sugar.Infoln("postgres does not respond")
+	}
+
 	h := handler.Handler{
-		Router:   e,
+		Router: e,
+
 		Users:    &storage.Users{Pool: pg},
 		Payments: &storage.Payments{Pool: pg},
+
+		Logger: sugar,
 	}
 
 	api := h.Router.Group("/api")
@@ -48,8 +60,9 @@ func main() {
 	api.Group("/auth")
 
 	/* USER MANAGEMENT */
-	user := api.Group("/user")
-	service.REGISTER()
+	user := api.Group("/users")
+	_ = user
+	controllers.UsersController{Handler: h}.REGISTER(user)
 	//friends := user.Group("/friends")
 
 	/* PAYMENT MANAGEMENT */
