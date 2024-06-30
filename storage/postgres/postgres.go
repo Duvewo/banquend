@@ -8,7 +8,6 @@ import (
 )
 
 func Open(ctx context.Context, connString string) (*pgxpool.Pool, error) {
-
 	cfg, err := pgxpool.ParseConfig(connString)
 
 	if err != nil {

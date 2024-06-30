@@ -1,0 +1,13 @@
+-- +goose Up
+-- +goose StatementBegin
+CREATE TABLE users (
+    id bigint,
+    first_name varchar
+    last_name varchar
+);
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+SELECT 'down SQL query';
+-- +goose StatementEnd

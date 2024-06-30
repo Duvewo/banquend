@@ -6,9 +6,7 @@ import (
 )
 
 type PaymentModel struct {
-	ID          int64
-	SenderID    int64
-	RecepientID int64
-	Sum         *big.Int
-	CreatedAt   time.Time
+	ID        int64
+	Amount    *big.Float
+	CreatedAt time.Time
 }

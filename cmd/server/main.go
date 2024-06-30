@@ -57,20 +57,31 @@ func main() {
 
 	api := h.Router.Group("/api")
 	/* AUTH MANAGEMENT */
-	api.Group("/auth")
+	auth := api.Group("/auth")
 
 	/* USER MANAGEMENT */
 	user := api.Group("/users")
-	_ = user
-	controllers.UsersController{Handler: h}.REGISTER(user)
 	//friends := user.Group("/friends")
+	accounts := user.Group("/accounts")
 
 	/* PAYMENT MANAGEMENT */
 	payments := api.Group("/payments")
-	payments.Group("/crypto")
+	cards := payments.Group("/cards")
+	// crypto := payments.Group("/crypto")
 
 	/* SUPPORT MANAGEMENT */
-	api.Group("/support")
+	support := api.Group("/support")
+
+	controllers.AuthController{Handler: h}.REGISTER(auth)
+
+	controllers.UsersController{Handler: h}.REGISTER(user)
+	controllers.AccountsController{Handler: h}.REGISTER(accounts)
+
+	controllers.PaymentsController{Handler: h}.REGISTER(payments)
+	controllers.CardsController{Handler: h}.REGISTER(cards)
+	//crypto
+
+	controllers.SupportController{Handler: h}.REGISTER(support)
 
 	sugar.Debugln("starting a server...")
 	if err := h.Router.Start(*FLAG_SRV_ADDR); !errors.Is(err, http.ErrServerClosed) {
