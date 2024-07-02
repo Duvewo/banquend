@@ -20,10 +20,13 @@ var (
 	FLAG_IS_SECURE = flag.Bool("secure", true, "Run server in secure mode")
 )
 
+// TODO: generate random
+var JWT_KEY = []byte("jwtkeyhere")
+
 func main() {
 	flag.Parse()
 	e := echo.New()
-	log, err := zap.NewProduction()
+	log, err := zap.NewDevelopment()
 
 	if err != nil {
 		//TODO: handle this error better
@@ -72,9 +75,10 @@ func main() {
 	/* SUPPORT MANAGEMENT */
 	support := api.Group("/support")
 
-	controllers.AuthController{Handler: h}.REGISTER(auth)
+	controllers.Register(&controllers.AuthController{Handler: h}, auth)
+	sugar.Debugln(h.Router.Routes())
 
-	controllers.UsersController{Handler: h}.REGISTER(user)
+	controllers.Register(&controllers.UsersController{Handler: h}, user)
 	controllers.AccountsController{Handler: h}.REGISTER(accounts)
 
 	controllers.PaymentsController{Handler: h}.REGISTER(payments)

@@ -10,5 +10,9 @@ type CardsController struct {
 }
 
 func (c CardsController) REGISTER(group *echo.Group) {
+	c.Router.GET("/:number", c.ByNumber)
+}
 
+func (c CardsController) ByNumber(ctx echo.Context) error {
+	return nil
 }
