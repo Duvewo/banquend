@@ -7,5 +7,5 @@ import (
 
 type AuthClaims struct {
 	models.AuthModel
-	jwt.RegisteredClaims `json:"claims,omitempty"`
+	jwt.RegisteredClaims
 }

@@ -27,7 +27,7 @@ var (
 )
 
 // TODO: generate random
-var JWT_KEY = []byte("jwtkeyhere")
+var JWT_KEY = []byte("key")
 
 func main() {
 	flag.Parse()
@@ -82,7 +82,7 @@ func main() {
 			if bearer != "" {
 				token := strings.Split(bearer, " ")[1]
 				h.Logger.Debugln(token)
-				parsedToken, err := jwtgo.ParseWithClaims(token, jwt.AuthClaims{}, func(t *jwtgo.Token) (interface{}, error) {
+				parsedToken, err := jwtgo.ParseWithClaims(token, &jwt.AuthClaims{}, func(t *jwtgo.Token) (interface{}, error) {
 					return JWT_KEY, nil
 				}, jwtgo.WithValidMethods([]string{jwtgo.SigningMethodHS384.Name}))
 				if err != nil {
