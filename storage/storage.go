@@ -14,3 +14,7 @@ type UsersRepository interface {
 }
 
 type PaymentsRepository interface{}
+
+type AccountsRepository interface {
+	Create(context.Context, models.AccountModel) error
+}

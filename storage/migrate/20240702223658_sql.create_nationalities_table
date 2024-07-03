@@ -1,11 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE transactions (
-    id bigint,
+CREATE TABLE nationalities (
+    id int,
+    country_code_en varchar,
+    country_name_en varchar,
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE transactions;
+DROP TABLE nationalities;
 -- +goose StatementEnd

@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/Duvewo/banquend/handler"
 	"github.com/Duvewo/banquend/internal/jwt"
@@ -24,7 +24,19 @@ func (c *AuthController) REGISTER(group *echo.Group) {
 }
 
 func (c *AuthController) Register(ctx echo.Context) error {
-	return nil
+	userForm := models.UserModel{}
+
+	if err := ctx.Bind(&userForm); err != nil {
+		return fmt.Errorf("to bind: %w", err)
+	}
+
+	//TODO: VALIDATE DATA
+
+	if err := c.Users.Create(context.Background(), userForm); err != nil {
+		return fmt.Errorf("to create: %w", err)
+	}
+
+	return ctx.JSON(http.StatusCreated, echo.Map{"ok": true})
 }
 
 func (c *AuthController) Login(ctx echo.Context) error {
@@ -33,22 +45,17 @@ func (c *AuthController) Login(ctx echo.Context) error {
 		return fmt.Errorf("to bind: %w", err)
 	}
 
-	if strings.EqualFold(authModel.Email, authModel.PhoneNumber) {
-
-	}
-
-	// c.Users.Search(
-	// 	context.Background(),
-	// 	models.UserModel{
-	// 		PhoneNumber: authModel.PhoneNumber,
-	// 		Email:       authModel.Email,
-	// 		Password:    authModel.Password,
-	// 	})
+	c.Users.Search(
+		context.Background(),
+		models.UserModel{
+			PhoneNumber: authModel.PhoneNumber,
+			Email:       authModel.Email,
+			Password:    authModel.Password,
+		})
 
 	claims := jwt.AuthClaims{
 		AuthModel: models.AuthModel{
-			Email:       authModel.Email,
-			PhoneNumber: authModel.PhoneNumber,
+			ID: 1,
 		},
 	}
 	token := jwtgo.NewWithClaims(jwtgo.SigningMethodHS384, claims)

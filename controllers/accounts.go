@@ -1,7 +1,11 @@
 package controllers
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/Duvewo/banquend/handler"
+	"github.com/Duvewo/banquend/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -27,7 +31,13 @@ func (c AccountsController) ByOwnerID(ctx echo.Context) error {
 }
 
 func (c AccountsController) Create(ctx echo.Context) error {
-	return nil
+	var account models.AccountModel
+
+	if err := ctx.Bind(&account); err != nil {
+		return fmt.Errorf("to bind: %w", err)
+	}
+
+	return c.Accounts.Create(context.Background(), account)
 }
 
 func (c AccountsController) Close(ctx echo.Context) error {
