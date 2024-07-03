@@ -10,11 +10,9 @@ type UserModel struct {
 	Email       string
 	AccountType int8 // 0 - user, 1 - support, 2 - admin
 	PhoneNumber string
-	Nationality string
+	Nationality int8
 	Password    string
 	CreatedAt   time.Time
 }
 
-func (m UserModel) Validate() {
-
-}
+func (m UserModel) Validate() {}

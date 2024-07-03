@@ -5,7 +5,7 @@ import "time"
 type TicketModel struct {
 	ID        int64
 	OwnerID   int64
-	Category  string
+	Category  int8
 	Body      string
 	CreatedAt time.Time
 }

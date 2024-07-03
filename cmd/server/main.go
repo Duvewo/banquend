@@ -4,13 +4,17 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/Duvewo/banquend/controllers"
 	"github.com/Duvewo/banquend/handler"
+	"github.com/Duvewo/banquend/internal/jwt"
 	"github.com/Duvewo/banquend/storage"
 	"github.com/Duvewo/banquend/storage/postgres"
+	jwtgo "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
@@ -19,7 +23,7 @@ var (
 	FLAG_SRV_ADDR   = flag.String("srv-addr", os.Getenv("SRV_ADDR"), "Server address to listen")
 	FLAG_CACHE_ADDR = flag.String("cache-addr", os.Getenv("CACHE_ADDR"), "Cache address to listen")
 	FLAG_DB_ADDR    = flag.String("db-addr", os.Getenv("DB_ADDR"), "Database address to listen")
-	FLAG_IS_SECURE  = flag.Bool("secure", true, "Run server in secure mode")
+	FLAG_IS_SECURE  = flag.Bool("secure", os.Getenv("MODE_SECURE") == "secure", "Run server in secure mode")
 )
 
 // TODO: generate random
@@ -70,6 +74,28 @@ func main() {
 	}
 
 	api := h.Router.Group("/api")
+
+	api.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			// Bearer JWT
+			bearer := c.Request().Header.Get("Authorization")
+			if bearer != "" {
+				token := strings.Split(bearer, " ")[1]
+				h.Logger.Debugln(token)
+				parsedToken, err := jwtgo.ParseWithClaims(token, jwt.AuthClaims{}, func(t *jwtgo.Token) (interface{}, error) {
+					return JWT_KEY, nil
+				}, jwtgo.WithValidMethods([]string{jwtgo.SigningMethodHS384.Name}))
+				if err != nil {
+					return fmt.Errorf("mware: %w", err)
+				}
+
+				h.Logger.Debugf("Parsed token: %s\n", parsedToken.Raw)
+				c.Set("user", parsedToken)
+			}
+			return next(c)
+		}
+	})
+
 	/* AUTH MANAGEMENT */
 	auth := api.Group("/auth")
 
