@@ -45,7 +45,7 @@ func (c *AuthController) Login(ctx echo.Context) error {
 		return fmt.Errorf("to bind: %w", err)
 	}
 
-	c.Users.Search(
+	_, err := c.Users.Search(
 		context.Background(),
 		models.UserModel{
 			PhoneNumber: authModel.PhoneNumber,
@@ -53,10 +53,12 @@ func (c *AuthController) Login(ctx echo.Context) error {
 			Password:    authModel.Password,
 		})
 
+	if err != nil {
+		return fmt.Errorf("auth/login: to search: %w", err)
+	}
+
 	claims := jwt.AuthClaims{
-		AuthModel: models.AuthModel{
-			ID: 1,
-		},
+		AuthModel: authModel,
 	}
 	token := jwtgo.NewWithClaims(jwtgo.SigningMethodHS384, claims)
 	signed, err := token.SignedString([]byte("key"))

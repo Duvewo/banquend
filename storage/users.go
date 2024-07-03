@@ -20,9 +20,11 @@ func (db *Users) Create(ctx context.Context, u models.UserModel) error {
 func (db *Users) Update(ctx context.Context, u models.UserModel) error {
 	return nil
 }
-func (db *Users) Search(ctx context.Context, u models.UserModel) (models.UserModel, error) {
-	return models.UserModel{}, nil
+func (db *Users) Search(ctx context.Context, u models.UserModel) (user models.UserModel, err error) {
+	const q = "SELECT * FROM users WHERE email = $1 OR phone_number = $2 OR password= $3 LIMIT 1"
+	return user, db.QueryRow(ctx, q, u.Email, u.PhoneNumber, u.Password).Scan(&user)
 }
 func (db *Users) Delete(ctx context.Context, u models.UserModel) error {
+	const q = "DELETE FROM"
 	return nil
 }

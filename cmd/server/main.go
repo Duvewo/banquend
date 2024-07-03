@@ -5,12 +5,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"math/big"
 	"net/http"
 	"os"
 	"strings"
 
 	"github.com/Duvewo/banquend/controllers"
 	"github.com/Duvewo/banquend/handler"
+	"github.com/Duvewo/banquend/internal/generator"
 	"github.com/Duvewo/banquend/internal/jwt"
 	"github.com/Duvewo/banquend/storage"
 	"github.com/Duvewo/banquend/storage/postgres"
@@ -25,9 +27,6 @@ var (
 	FLAG_DB_ADDR    = flag.String("db-addr", os.Getenv("DB_ADDR"), "Database address to listen")
 	FLAG_IS_SECURE  = flag.Bool("secure", os.Getenv("MODE_SECURE") == "secure", "Run server in secure mode")
 )
-
-// TODO: generate random
-var JWT_KEY = []byte("key")
 
 func main() {
 	flag.Parse()
@@ -69,9 +68,12 @@ func main() {
 		Router: router,
 		//Cache:    cache,
 		Logger:   sugaredLogger,
+		JWTKey:   generator.MustGenerate(int(generator.MustGenerateNumber(big.NewInt(3333)).Int64())),
 		Users:    &storage.Users{Pool: db},
 		Payments: &storage.Payments{Pool: db},
 	}
+
+	h.Logger.Debugf("key is %v\n", h.JWTKey)
 
 	api := h.Router.Group("/api")
 
@@ -83,7 +85,7 @@ func main() {
 				token := strings.Split(bearer, " ")[1]
 				h.Logger.Debugln(token)
 				parsedToken, err := jwtgo.ParseWithClaims(token, &jwt.AuthClaims{}, func(t *jwtgo.Token) (interface{}, error) {
-					return JWT_KEY, nil
+					return h.JWTKey, nil
 				}, jwtgo.WithValidMethods([]string{jwtgo.SigningMethodHS384.Name}))
 				if err != nil {
 					return fmt.Errorf("mware: %w", err)

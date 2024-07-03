@@ -11,6 +11,7 @@ type Handler struct {
 	Router   *echo.Echo
 	Cache    *redis.Client
 	Logger   *zap.SugaredLogger
+	JWTKey   []byte
 	Users    storage.UsersRepository
 	Accounts storage.AccountsRepository
 	Payments storage.PaymentsRepository
