@@ -11,7 +11,6 @@ import (
 	"github.com/Duvewo/banquend/handler"
 	"github.com/Duvewo/banquend/storage"
 	"github.com/Duvewo/banquend/storage/postgres"
-	"github.com/Duvewo/banquend/storage/redis"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )
@@ -52,19 +51,19 @@ func main() {
 		sugaredLogger.Fatalf("to ping: %v", err)
 	}
 
-	cache, err := redis.Open(*FLAG_CACHE_ADDR)
+	// cache, err := redis.Open(*FLAG_CACHE_ADDR)
 
-	if err != nil {
-		sugaredLogger.Fatalf("open redis: %v", err)
-	}
+	// if err != nil {
+	// 	sugaredLogger.Fatalf("open redis: %v", err)
+	// }
 
-	if err := cache.Ping(context.Background()).Err(); err != nil {
-		sugaredLogger.Fatalf("to ping cache: %v", err)
-	}
+	// if err := cache.Ping(context.Background()).Err(); err != nil {
+	// 	sugaredLogger.Fatalf("to ping cache: %v", err)
+	// }
 
 	h := handler.Handler{
-		Router:   router,
-		Cache:    cache,
+		Router: router,
+		//Cache:    cache,
 		Logger:   sugaredLogger,
 		Users:    &storage.Users{Pool: db},
 		Payments: &storage.Payments{Pool: db},
