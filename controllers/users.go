@@ -31,5 +31,5 @@ func (c UsersController) ByQuery(ctx echo.Context) error {
 		return fmt.Errorf("users/byquery: to search: %w", err)
 	}
 
-	return ctx.JSON(http.StatusOK, user)
+	return ctx.JSON(http.StatusOK, echo.Map{"ok": true, "data": user})
 }

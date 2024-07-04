@@ -18,3 +18,7 @@ type PaymentsRepository interface{}
 type AccountsRepository interface {
 	Create(context.Context, models.AccountModel) error
 }
+
+type CurrenciesRepository interface {
+	ByCode(context.Context, models.CurrencyModel) (models.CurrencyModel, error)
+}

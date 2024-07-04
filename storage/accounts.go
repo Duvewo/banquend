@@ -12,5 +12,7 @@ type Accounts struct {
 }
 
 func (db *Accounts) Create(ctx context.Context, account models.AccountModel) error {
-	return nil
+	const q = "INSERT INTO accounts (id, owner_id, currency, amount, created_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)"
+	_, err := db.Exec(ctx, q, account.ID, account.OwnerID, account.Currency, account.Amount, account.CreatedAt, account.DeletedAt)
+	return err
 }

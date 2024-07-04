@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/Duvewo/banquend/handler"
 	"github.com/Duvewo/banquend/models"
@@ -37,7 +38,10 @@ func (c AccountsController) Create(ctx echo.Context) error {
 		return fmt.Errorf("to bind: %w", err)
 	}
 
-	return c.Accounts.Create(context.Background(), account)
+	if err := c.Accounts.Create(context.Background(), account); err != nil {
+		return fmt.Errorf("accountsController/Create(): to create, %w", err)
+	}
+	return ctx.JSON(http.StatusOK, echo.Map{"ok": true})
 }
 
 func (c AccountsController) Close(ctx echo.Context) error {

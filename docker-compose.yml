@@ -26,6 +26,8 @@ services:
     image: postgres:16.3-bullseye@sha256:6898a1c52df5c890232055196859712ee9ba381fb631d6ee207e9d23535f2a0d
     env_file:
       - .env
+    depends_on:
+      - migration
     ports:
       - 5432:5432
     expose:
@@ -41,6 +43,11 @@ services:
       - 1234:1234
     expose:
       - 1234
+
+  migration:
+    build:
+      dockerfile: ./images/migrate/Dockerfile
+      context: ./.
 
 networks:
   shared:

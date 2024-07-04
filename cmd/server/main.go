@@ -67,10 +67,14 @@ func main() {
 	h := handler.Handler{
 		Router: router,
 		//Cache:    cache,
-		Logger:   sugaredLogger,
-		JWTKey:   generator.MustGenerate(int(generator.MustGenerateNumber(big.NewInt(3333)).Int64())),
-		Users:    &storage.Users{Pool: db},
-		Payments: &storage.Payments{Pool: db},
+		Logger: sugaredLogger,
+		JWTKey: generator.MustGenerate(
+			int(generator.MustGenerateNumber(big.NewInt(3333)).Int64() + 100),
+		),
+		Users:      &storage.Users{Pool: db},
+		Accounts:   &storage.Accounts{Pool: db},
+		Currencies: &storage.Currencies{Pool: db},
+		Payments:   &storage.Payments{Pool: db},
 	}
 
 	h.Logger.Debugf("key is %v\n", h.JWTKey)
@@ -105,6 +109,7 @@ func main() {
 	user := api.Group("/users")
 	//friends := user.Group("/friends")
 	accounts := user.Group("/accounts")
+	currencies := accounts.Group("/currencies")
 
 	/* PAYMENT MANAGEMENT */
 	payments := api.Group("/payments")
@@ -118,6 +123,7 @@ func main() {
 
 	controllers.Register(&controllers.UsersController{Handler: h}, user)
 	controllers.Register(&controllers.AccountsController{Handler: h}, accounts)
+	controllers.Register(&controllers.CurrenciesController{Handler: h}, currencies)
 
 	controllers.Register(&controllers.PaymentsController{Handler: h}, payments)
 	controllers.Register(&controllers.CardsController{Handler: h}, cards)
