@@ -16,3 +16,7 @@ func (db *Currencies) ByCode(ctx context.Context, code string) (models.CurrencyM
 	var currency models.CurrencyModel
 	return currency, db.QueryRow(ctx, q, code).Scan(&currency)
 }
+
+func (db *Currencies) ListAll(ctx context.Context) ([]models.CurrencyModel, error) {
+	return nil, nil
+}
