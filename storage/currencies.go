@@ -11,8 +11,8 @@ type Currencies struct {
 	*pgxpool.Pool
 }
 
-func (db *Currencies) ByCode(ctx context.Context, cur models.CurrencyModel) (models.CurrencyModel, error) {
+func (db *Currencies) ByCode(ctx context.Context, code string) (models.CurrencyModel, error) {
 	const q = "SELECT * FROM currencies WHERE code = $1 LIMIT 1"
 	var currency models.CurrencyModel
-	return currency, db.QueryRow(ctx, q, cur.Code).Scan(&currency)
+	return currency, db.QueryRow(ctx, q, code).Scan(&currency)
 }

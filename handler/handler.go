@@ -14,6 +14,8 @@ type Handler struct {
 	JWTKey     []byte
 	Users      storage.UsersRepository
 	Accounts   storage.AccountsRepository
+	Cards      storage.CardsRepository
+	Auth       storage.AuthRepository
 	Currencies storage.CurrenciesRepository
 	Payments   storage.PaymentsRepository
 }

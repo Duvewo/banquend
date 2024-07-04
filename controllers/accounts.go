@@ -19,7 +19,8 @@ func (c AccountsController) REGISTER(group *echo.Group) {
 	c.Router.GET("/:owner_id", c.ByOwnerID)
 
 	c.Router.POST("/create", c.Create)
-	c.Router.DELETE("/:id/close", c.Close)
+	c.Router.DELETE("/:id/close", c.CloseByID)
+	c.Router.PATCH("/:id/restrict", c.RestrictByID)
 
 }
 
@@ -44,6 +45,10 @@ func (c AccountsController) Create(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, echo.Map{"ok": true})
 }
 
-func (c AccountsController) Close(ctx echo.Context) error {
+func (c AccountsController) CloseByID(ctx echo.Context) error {
+	return nil
+}
+
+func (c AccountsController) RestrictByID(ctx echo.Context) error {
 	return nil
 }

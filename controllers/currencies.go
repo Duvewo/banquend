@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Duvewo/banquend/handler"
-	"github.com/Duvewo/banquend/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,7 +18,7 @@ func (c CurrenciesController) REGISTER(g *echo.Group) {
 }
 
 func (c CurrenciesController) ByCode(ctx echo.Context) error {
-	cur, err := c.Currencies.ByCode(context.Background(), models.CurrencyModel{Code: ctx.Param("code")})
+	cur, err := c.Currencies.ByCode(context.Background(), ctx.Param("code"))
 
 	if err != nil {
 		return fmt.Errorf("currencies/byCode: to byCode(), %w", err)

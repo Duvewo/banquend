@@ -45,17 +45,17 @@ func (c *AuthController) Login(ctx echo.Context) error {
 		return fmt.Errorf("to bind: %w", err)
 	}
 
-	_, err := c.Users.Search(
-		context.Background(),
-		models.UserModel{
-			PhoneNumber: authModel.PhoneNumber,
-			Email:       authModel.Email,
-			Password:    authModel.Password,
-		})
+	// _, err := c.Users.Search(
+	// 	context.Background(),
+	// 	models.UserModel{
+	// 		PhoneNumber: authModel.PhoneNumber,
+	// 		Email:       authModel.Email,
+	// 		Password:    authModel.Password,
+	// 	})
 
-	if err != nil {
-		return fmt.Errorf("auth/login: to search: %w", err)
-	}
+	// if err != nil {
+	// 	return fmt.Errorf("auth/login: to search: %w", err)
+	// }
 
 	claims := jwt.AuthClaims{
 		AuthModel: authModel,

@@ -16,3 +16,10 @@ func (db *Accounts) Create(ctx context.Context, account models.AccountModel) err
 	_, err := db.Exec(ctx, q, account.ID, account.OwnerID, account.Currency, account.Amount, account.CreatedAt, account.DeletedAt)
 	return err
 }
+
+func (db *Accounts) ByOwnerID(ctx context.Context, ownerID int) ([]models.AccountModel, error) {
+	return nil, nil
+}
+func (db *Accounts) ByID(ctx context.Context, ID int) (models.AccountModel, error) {
+	return models.AccountModel{}, nil
+}
